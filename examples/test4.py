@@ -24,4 +24,4 @@ for i, t in enumerate(collec.iter_triples(None, RDF.type, None)):
         break
     assert t[1] == RDF.type
     g.add(t)
-print len(g)
+print(len(g))

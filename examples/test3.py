@@ -23,4 +23,4 @@ collec = hydra.Collection.from_iri(URL)
 #print collec.graph.serialize(format="nquads") + "\n--------\n"
 
 template = collec.find_suitable_template([RDF.subject, EX.p, EX.o])
-print template.generate_iri({ RDF.subject: "X", EX.p: "Y", EX.o: "Z" })
+print(template.generate_iri({ RDF.subject: "X", EX.p: "Y", EX.o: "Z" }))

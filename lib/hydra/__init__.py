@@ -319,7 +319,7 @@ class BoundOperation(Operation):
             ctype = effective_headers.setdefault('content-type', 'application/ld+json')
             body = body.serialize(format=ctype)
 
-        return http.request(unicode(self.target_iri),
+        return http.request(str(self.target_iri),
                             self.method,
                             body,
                             effective_headers)
@@ -449,7 +449,7 @@ class Collection(Resource):
     next_page = _py_property(get_next_page)
 
     def get_next(self, headers=None, http=None):
-        obj = self.graph.value(self.identifier, HYDRA.next)
+        obj = self.graph.value(self.identifier, HYDRA.__next__)
         if obj:
             return Collection.from_iri(obj, headers, http)
         else:
@@ -478,7 +478,7 @@ class Collection(Resource):
         i = self
         while i is not None:
             yield i
-            i = i.next
+            i = i.__next__
     pages = property(iter_pages)
 
 
@@ -527,21 +527,21 @@ class IriTemplate(Resource):
         """
         # ensure that keys are URIRefs in values
         graph = self.graph
-        values = { URIRef(key):value for key, value in values.items() }
+        values = { URIRef(key):value for key, value in list(values.items()) }
         representation = self.get_variable_representation(default=default_representation)
         mode = 0 if representation is HYDRA.BasicRepresentation else 1
         data, msg = self._map_properties(values)
         if data is None:
             raise ValueError(msg)
         data = { key: _format_variable(value, mode)
-                 for key, value in data.items() }
+                 for key, value in list(data.items()) }
         return expand(self.template, data)
 
     def _map_properties(self, values):
         graph = self.graph
         data = {}
         for mapping in self.mappings:
-            for prop, value in values.iteritems():
+            for prop, value in values.items():
                 if (prop, SUBPROP, mapping.property) in graph:
                     values.pop(prop)
                     if value is not None:
@@ -551,24 +551,24 @@ class IriTemplate(Resource):
                 if mapping.required:
                     return None, "Required property <%s> is missing" % property
         if values:
-            return None, "Service does not support properties %s" % values.keys()
+            return None, "Service does not support properties %s" % list(values.keys())
         return data, None
 
 
 
 def _format_variable(term, mode):
     if mode == 0: # Basic
-        return unicode(term)
+        return str(term)
     else: # explicit
         if type(term) is Literal:
-            ret = u'"%s"' % term
+            ret = '"%s"' % term
             if term.datatype and term.datatype != XSD.String:
-                ret = u'%s^^%s' % (ret, term.datatype)
+                ret = '%s^^%s' % (ret, term.datatype)
             elif term.language:
-                ret = u'%s@%s' % (ret, term.language)
+                ret = '%s@%s' % (ret, term.language)
             return ret.encode('utf-8')
         else:
-            return unicode(term).encode('utf-8')
+            return str(term).encode('utf-8')
 
 
 class IriTemplateMapping(Resource):
@@ -607,7 +607,7 @@ def _fix_default_graph(cg):
 
 class _MemCache(dict):
 
-    def __nonzero__(self):
+    def __bool__(self):
         # even if empty, a _MemCache is True
         return True
 

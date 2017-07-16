@@ -27,8 +27,8 @@ QUERY = """
     LIMIT 10
 """
 
-print len(g)
+print(len(g))
 
 results = g.query(QUERY)
 for i in results:
-    print i
+    print(i)
