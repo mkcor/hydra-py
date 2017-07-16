@@ -21,8 +21,8 @@ def main():
         if "hydra-py" in name or "py-hydra" in name or "Halloween" in name:
             resp, _ = i.find_suitable_operation(SCHEMA.DeleteAction)()
             if resp.status // 100 != 2:
-                print(("error deleting <%s>" % i.identifier))
+                print("error deleting <%s>" % i.identifier)
             else:
-                print(("deleted <%s>" % i.identifier))
+                print("deleted <%s>" % i.identifier)
 
 main()

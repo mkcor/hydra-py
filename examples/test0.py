@@ -11,9 +11,9 @@ def main():
 
     print("\nApi documentation:")
     for supcls in res.api_documentation.supported_classes:
-        print(("  %s" % supcls.identifier))
+        print("  %s" % supcls.identifier)
         for supop in supcls.supported_operations:
-            print(("    %s" % supop.identifier))
+            print("    %s" % supop.identifier)
     print("")
 
     create_event = res.find_suitable_operation(SCHEMA.AddAction, SCHEMA.Event)
